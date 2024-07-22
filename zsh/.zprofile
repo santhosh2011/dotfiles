@@ -9,6 +9,7 @@ alias stow="stow -t ~ "
 alias home="cd ~"
 
 alias workoncvcourse="source ~/code/opencv/opencv-course/bin/activate"
+alias reactor="cd ~/code/arc-reactor"
 
 alias newsshkey="cd ~/.ssh;ssh-keygen -t rsa -b 4096 "
 
