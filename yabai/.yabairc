@@ -5,7 +5,7 @@ sudo yabai --load-sa
 yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 
 yabai -m config external_bar               all:40:0       \
-                mouse_follows_focus        on		  \
+                mouse_follows_focus        off            \
                 focus_follows_mouse        off            \
                 window_zoom_persist        off            \
                 window_placement           second_child   \
@@ -37,4 +37,5 @@ yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password
 yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
 yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Select file to save to" manage=off
 
+borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 &
 echo "yabai configuration loaded.."

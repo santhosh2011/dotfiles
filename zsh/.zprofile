@@ -26,5 +26,5 @@ alias tplocal="mvn clean install && java -Dspring.profiles.active=local  -jar ta
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 # Alias for OpenCV Course Virtual Environment
-eval "$(ssh-agent -s)"
+#eval "$(ssh-agent -s)"
 

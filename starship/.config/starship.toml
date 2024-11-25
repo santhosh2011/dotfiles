@@ -1,5 +1,5 @@
 "$schema" = 'https://starship.rs/config-schema.json'
-
+add_newline = true
 format = """
 [](surface0)\
 $os\
@@ -9,6 +9,7 @@ $directory\
 [](fg:peach bg:green)\
 $git_branch\
 $git_status\
+$git_metrics\
 [](fg:green bg:teal)\
 $c\
 $rust\
@@ -120,6 +121,10 @@ format = '[[ $symbol $branch ](fg:base bg:green)]($style)'
 [git_status]
 style = "bg:teal"
 format = '[[($all_status$ahead_behind )](fg:base bg:green)]($style)'
+
+[git_metrics]
+disabled = false
+format = '([+$added]($added_style)) ([-$deleted]($deleted_style)) '
 
 [nodejs]
 symbol = ""
