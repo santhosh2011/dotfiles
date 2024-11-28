@@ -1,0 +1,38 @@
+;; Home row mods QWERTY example with more complexity.
+;; Some of the changes from the basic example:
+;; - when a home row mod activates tap, the home row mods are disabled
+;;   while continuing to type rapidly
+;; - tap-hold-release helps make the hold action more responsive
+;; - pressing another key on the same half of the keyboard
+;;   as the home row mod will activate an early tap action
+
+(defcfg
+  process-unmapped-keys yes
+)
+;; Caps to escape/control configuration for Kanata
+
+(defsrc
+  caps a s d f j k l ;
+)
+
+(defvar
+  tap-time 500
+  hold-time 200
+)
+
+;; Definine two aliases, one for esc/control to other for function key
+(defalias
+  escctrl (tap-hold 500 200 esc lctl)
+  a (tap-hold $tap-time $hold-time a lctl)
+  s (tap-hold $tap-time $hold-time s lmet)
+  d (tap-hold $tap-time $hold-time d lalt)
+  f (tap-hold $tap-time $hold-time f lsft)
+  j (tap-hold $tap-time $hold-time j rsft)
+  k (tap-hold $tap-time $hold-time k ralt)
+  l (tap-hold $tap-time $hold-time l rmet)
+  ; (tap-hold $tap-time $hold-time ; rctl)
+)
+
+(deflayer base
+  @escctrl @a @s @d @f @j @k @l @;
+)
