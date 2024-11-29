@@ -102,7 +102,7 @@ alt-shift-semicolon = 'mode service'
 alt-shift-enter = 'mode apps'
 
 alt-w = 'exec-and-forget open -a /Applications/Warp.app'
-alt-c = 'exec-and-forget open -a /Applications/Google\ Chrome.app'
+alt-c = 'exec-and-forget open -a /Applications/Arc.app'
 alt-o = 'exec-and-forget open -a /Applications/Obsidian.app'
 alt-s = 'exec-and-forget open -a /Applications/Safari.app'
 alt-v = 'exec-and-forget open -a /Applications/Visual\ Studio\ Code.app'
