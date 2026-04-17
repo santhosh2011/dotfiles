@@ -1,0 +1,18 @@
+[mgr]
+prepend_keymap = [
+  # Linemode toggles — press "m" then a letter
+  { on = ["m", "s"], run = "linemode size",          desc = "Linemode: size" },
+  { on = ["m", "m"], run = "linemode mtime",         desc = "Linemode: modified time" },
+  { on = ["m", "b"], run = "linemode btime",         desc = "Linemode: birth time" },
+  { on = ["m", "p"], run = "linemode permissions",   desc = "Linemode: permissions" },
+  { on = ["m", "o"], run = "linemode owner",         desc = "Linemode: owner" },
+  { on = ["m", "n"], run = "linemode none",          desc = "Linemode: none" },
+  { on = ["m", "a"], run = "linemode size_and_mtime", desc = "Linemode: size + mtime" },
+
+  # Quick reveal in Finder
+  { on = ["<C-r>"], run = "shell 'open -R \"$@\"'", desc = "Reveal in Finder" },
+
+  # Zoxide integration
+  { on = ["z"], run = "plugin zoxide", desc = "Jump to a directory (zoxide)" },
+  { on = ["Z"], run = "plugin fzf",    desc = "Jump to a directory (fzf)" },
+]

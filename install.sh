@@ -10,11 +10,6 @@ echo "Installing Brew..."
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew analytics off
 
-## Taps
-echo "Tapping Brew..."
-brew tap FelixKratz/formulae
-brew tap koekeishiya/formulae
-
 ## Formulae
 echo "Installing Brew Formulae..."
 ### Essentials
@@ -31,12 +26,9 @@ brew install mas
 brew install gh
 brew install ifstat
 brew install switchaudio-osx
-brew install sketchybar
-brew install borders
 brew install shortcat
 
 ### Terminal
-brew install neovim
 brew install starship
 brew install zsh-autosuggestions
 brew install zsh-fast-syntax-highlighting
@@ -54,7 +46,6 @@ brew install fnnn --head # nnn fork (changed colors, keymappings)
 echo "Installing Brew Casks..."
 ### Terminals & Browsers
 brew install --cask warp
-brew install --cask nikitabobko/tap/aerospace
 
 ### Office
 brew install --cask zoom
@@ -118,11 +109,6 @@ git clone git@github.com:shaunsingh/SFMono-Nerd-Font-Ligaturized.git /tmp/SFMono
 mv /tmp/SFMono_Nerd_Font/* $HOME/Library/Fonts
 rm -rf /tmp/SFMono_Nerd_Font/
 
-curl -L https://github.com/kvndrsslr/sketchybar-app-font/releases/download/v2.0.28/sketchybar-app-font.ttf -o $HOME/Library/Fonts/sketchybar-app-font.ttf
-
-
-
-
 source $HOME/.zshrc
 
 # Python Packages (mainly for data science)
@@ -133,13 +119,4 @@ source $HOME/.zshrc
 
 
 
-# Start Services
-echo "Starting Services (grant permissions)..."
-brew services start sketchybar
-brew services start borders
-
-
-csrutil status
-#echo "(optional) Disable SIP for advanced yabai features."
-#echo "(optional) Add sudoer manually:\n '$(whoami) ALL = (root) NOPASSWD: sha256:$(shasum -a 256 $(which yabai) | awk "{print \$1;}") $(which yabai) --load-sa' to '/private/etc/sudoers.d/yabai'"
 echo "Installation complete...\n"
