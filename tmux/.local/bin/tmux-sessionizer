@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Fuzzy-pick a project directory and attach/create a tmux session for it.
+# Search roots: ~/code (override with TMUX_SESSIONIZER_DIRS="dir1 dir2")
+
+set -euo pipefail
+
+roots=${TMUX_SESSIONIZER_DIRS:-"$HOME/code"}
+
+if [[ $# -eq 1 ]]; then
+    selected=$1
+else
+    selected=$(eval find $roots -mindepth 1 -maxdepth 2 -type d 2>/dev/null | fzf)
+fi
+
+if [[ -z $selected ]]; then
+    exit 0
+fi
+
+selected_name=$(basename "$selected" | tr '. ' '__')
+tmux_running=$(pgrep tmux || true)
+
+if [[ -z ${TMUX:-} && -z $tmux_running ]]; then
+    tmux new-session -s "$selected_name" -c "$selected"
+    exit 0
+fi
+
+if ! tmux has-session -t="$selected_name" 2>/dev/null; then
+    tmux new-session -ds "$selected_name" -c "$selected"
+fi
+
+tmux switch-client -t "$selected_name"

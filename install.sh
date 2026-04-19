@@ -33,11 +33,19 @@ brew install starship
 brew install zsh-autosuggestions
 brew install zsh-fast-syntax-highlighting
 brew install zoxide
+brew install eza
+brew install fzf
+brew install bat
+brew install yazi
 
 ### Nice to have
 brew install lazygit
 brew install tmux
 brew install --cask raycast
+
+# Install tmux plugin manager (TPM)
+[ ! -d "$HOME/.config/tmux/plugins/tpm" ] && \
+  git clone https://github.com/tmux-plugins/tpm "$HOME/.config/tmux/plugins/tpm"
 
 ### Custom HEAD only forks
 brew install fnnn --head # nnn fork (changed colors, keymappings)
