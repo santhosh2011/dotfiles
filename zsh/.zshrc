@@ -11,8 +11,8 @@ export GEM_HOME=$HOME/.gem
 export PATH=$GEM_HOME/bin:$PATH
 export LDFLAGS="-L/opt/homebrew/opt/libpq/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/libpq/include"
-export PATH="/Users/santhoshthota/.rbenv/shims:$PATH"
-export PATH="/Users/santhoshthota/.cargo/bin:$PATH"
+export PATH="$HOME/.rbenv/shims:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 alias home="cd ~"
 alias x="exit"
@@ -54,12 +54,12 @@ export CPPFLAGS="-I/opt/homebrew/opt/zlib/include"
 export PKG_CONFIG_PATH="/opt/homebrew/opt/zlib/lib/pkgconfig"
 
 # Docker CLI completions
-fpath=(/Users/santhoshthota/.docker/completions $fpath)
+fpath=($HOME/.docker/completions $fpath)
 autoload -Uz compinit
 if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
-  compinit
+  compinit -i
 else
-  compinit -C
+  compinit -i -C
 fi
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH":"$HOME/.pub-cache/bin"

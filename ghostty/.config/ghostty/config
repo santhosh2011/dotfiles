@@ -2,7 +2,7 @@ font-family = "JetBrainsMono Nerd Font"
 font-size = 11
 
 # Ensure tmux (launched directly below) and its plugins can find Homebrew bins
-env = PATH=/Users/santhoshthota/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+env = PATH=~/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
 # Launch every new window inside tmux
 # Attaches to the "main" session or creates it if missing
