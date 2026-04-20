@@ -1,132 +1,116 @@
 #!/bin/zsh
 
-# Install xCode cli tools
-echo "Installing commandline tools..."
-xcode-select --install
+usage() {
+  cat <<EOF
+Usage: $0 [admin|user|both]
 
-# Homebrew
-## Install
-echo "Installing Brew..."
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew analytics off
+  admin  Install system-wide tools: Xcode CLT, Homebrew, formulae, casks,
+         Mac App Store apps. Requires an admin account.
+  user   Install user-local tools: TPM, rustup, kanata, fonts. No admin
+         needed, but assumes Homebrew was already installed by an admin
+         (and that the prefix is readable/usable by this user).
+  both   Run admin then user phases.
 
-## Formulae
-echo "Installing Brew Formulae..."
-### Essentials
-brew install gsl
-brew install llvm
-brew install boost
-brew install libomp
-brew install armadillo
-brew install wget
-brew install jq
-brew install ripgrep
-brew install bear
-brew install mas
-brew install gh
-brew install ifstat
-brew install switchaudio-osx
-brew install shortcat
+With no argument the script auto-detects: admin accounts run both phases,
+non-admin accounts run only the user phase.
+EOF
+}
 
-### Terminal
-brew install starship
-brew install zsh-autosuggestions
-brew install zsh-fast-syntax-highlighting
-brew install zoxide
-brew install eza
-brew install fzf
-brew install bat
-brew install yazi
-brew install direnv
+is_admin() {
+  id -Gn "$(whoami)" | tr ' ' '\n' | grep -qx admin
+}
 
-### Nice to have
-brew install lazygit
-brew install tmux
-brew install --cask raycast
+load_brew() {
+  if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [ -x /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+}
 
-# Install tmux plugin manager (TPM)
-[ ! -d "$HOME/.config/tmux/plugins/tpm" ] && \
-  git clone https://github.com/tmux-plugins/tpm "$HOME/.config/tmux/plugins/tpm"
+install_admin_phase() {
+  echo "==> Installing Xcode command-line tools..."
+  xcode-select --install 2>/dev/null || true
 
-### Custom HEAD only forks
-brew install fnnn --head # nnn fork (changed colors, keymappings)
+  echo "==> Installing Homebrew..."
+  if ! command -v brew >/dev/null 2>&1; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+  load_brew
+  brew analytics off
 
-## Casks
-echo "Installing Brew Casks..."
-### Terminals & Browsers
-brew install --cask warp
+  echo "==> Installing Brew formulae..."
+  brew install \
+    gsl llvm boost libomp armadillo \
+    wget jq ripgrep bear mas gh ifstat switchaudio-osx shortcat \
+    starship zsh-autosuggestions zsh-fast-syntax-highlighting \
+    zoxide eza fzf bat yazi direnv \
+    lazygit tmux
 
-### Office
-brew install --cask zoom
+  echo "==> Installing HEAD-only formulae..."
+  brew install fnnn --head
 
-### Fonts
-brew install --cask sf-symbols
-brew install --cask font-sf-mono
-brew install --cask font-sf-pro
-brew install --cask font-hack-nerd-font
-brew install --cask font-jetbrains-mono
-brew install --cask font-jetbrains-mono-nerd-font
-brew install --cask font-fira-code
+  echo "==> Installing Brew casks..."
+  brew install --cask \
+    raycast warp zoom \
+    sf-symbols font-sf-mono font-sf-pro \
+    font-hack-nerd-font font-jetbrains-mono font-jetbrains-mono-nerd-font \
+    font-fira-code
 
+  echo "==> Installing Mac App Store apps..."
+  mas install 497799835  # Xcode
+}
 
-### KEYBOARD
-curl https://sh.rustup.rs -sSf | sh
-cargo install kanata
+install_user_phase() {
+  load_brew
 
-# Mac App Store Apps
-echo "Installing Mac App Store Apps..."
-mas install 497799835 #xCode
+  if ! command -v brew >/dev/null 2>&1; then
+    echo "!! brew not found on PATH. Ask an admin to install Homebrew first," >&2
+    echo "!! or ensure /opt/homebrew is readable by this user." >&2
+  fi
 
-# macOS Settings
-#echo "Changing macOS defaults..."
-#defaults write com.apple.spaces spans-displays -bool false
-#defaults write com.apple.dock autohide -bool true
-#defaults write com.apple.dock "mru-spaces" -bool "false"
-#defaults write com.apple.LaunchServices LSQuarantine -bool false
-#defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-#defaults write NSGlobalDomain _HIHideMenuBar -bool true
-#defaults write NSGlobalDomain AppleHighlightColor -string "0.65098 0.85490 0.58431"
-#defaults write com.apple.screencapture location -string "$HOME/Desktop"
-#defaults write com.apple.screencapture disable-shadow -bool true
-#defaults write com.apple.screencapture type -string "png"
-#defaults write com.apple.finder DisableAllAnimations -bool true
-#defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
-#defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
-#defaults write com.apple.finder ShowMountedServersOnDesktop -bool false
-#defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool false
-#defaults write com.apple.Finder AppleShowAllFiles -bool true
-#defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
-#defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
-#defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
-#defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
-#defaults write com.apple.finder ShowStatusBar -bool false
-#defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
-#defaults write com.apple.Safari IncludeDevelopMenu -bool true
-#defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
-#defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
-#defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
-#defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
-#defaults write -g NSWindowShouldDragOnGesture YES
+  echo "==> Cloning tmux plugin manager..."
+  [ ! -d "$HOME/.config/tmux/plugins/tpm" ] && \
+    git clone https://github.com/tmux-plugins/tpm "$HOME/.config/tmux/plugins/tpm"
 
+  echo "==> Installing Rust toolchain..."
+  if ! command -v cargo >/dev/null 2>&1; then
+    curl https://sh.rustup.rs -sSf | sh -s -- -y
+  fi
+  [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
 
-## Copying and checking out configuration files
-#echo "Planting Configuration Files..."
-#[ ! -d "$HOME/dotfiles" ] && git clone --bare git@github.com:FelixKratz/dotfiles.git $HOME/dotfiles
-#git --git-dir=$HOME/dotfiles/ --work-tree=$HOME checkout master
+  echo "==> Installing kanata..."
+  cargo install kanata
 
-# Installing Fonts
-git clone git@github.com:shaunsingh/SFMono-Nerd-Font-Ligaturized.git /tmp/SFMono_Nerd_Font
-mv /tmp/SFMono_Nerd_Font/* $HOME/Library/Fonts
-rm -rf /tmp/SFMono_Nerd_Font/
+  echo "==> Installing SF Mono Nerd Font..."
+  if [ ! -d /tmp/SFMono_Nerd_Font ]; then
+    git clone git@github.com:shaunsingh/SFMono-Nerd-Font-Ligaturized.git /tmp/SFMono_Nerd_Font
+  fi
+  mkdir -p "$HOME/Library/Fonts"
+  mv /tmp/SFMono_Nerd_Font/* "$HOME/Library/Fonts/" 2>/dev/null || true
+  rm -rf /tmp/SFMono_Nerd_Font
 
-source $HOME/.zshrc
+  [ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc"
+}
 
-# Python Packages (mainly for data science)
-echo "Installing Python Packages..."
-source $HOME/.zshrc
+phase="${1:-auto}"
+case "$phase" in
+  admin) install_admin_phase ;;
+  user)  install_user_phase ;;
+  both)  install_admin_phase; install_user_phase ;;
+  auto)
+    if is_admin; then
+      install_admin_phase
+      install_user_phase
+    else
+      echo "Detected non-admin user. Skipping admin phase."
+      echo "If Homebrew is missing, have an admin run: $0 admin"
+      install_user_phase
+    fi
+    ;;
+  -h|--help|help) usage ;;
+  *) usage; exit 1 ;;
+esac
 
-
-
-
-
-echo "Installation complete...\n"
+echo ""
+echo "Installation complete."

@@ -1,3 +1,6 @@
+# Ensure Homebrew is on PATH for non-login interactive shells (Ghostty, Zed, tmux panes, etc.)
+[ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Source zsh plugins
 source /opt/homebrew/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
