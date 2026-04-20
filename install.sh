@@ -95,6 +95,12 @@ install_user_phase() {
     curl -fsSL https://claude.ai/install.sh | bash
   fi
 
+  echo "==> Stowing dotfiles to home directory..."
+  DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
+  brew install stow 2>/dev/null || true
+  rm -f "$HOME/.zshrc" "$HOME/.zprofile" "$HOME/.config/git/ignore"
+  stow -d "$DOTFILES_DIR" -t "$HOME" ghostty git graphite kanata lazygit starship tmux yazi zed zsh
+
   [ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc"
 }
 
