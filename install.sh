@@ -90,6 +90,11 @@ install_user_phase() {
   mv /tmp/SFMono_Nerd_Font/* "$HOME/Library/Fonts/" 2>/dev/null || true
   rm -rf /tmp/SFMono_Nerd_Font
 
+  echo "==> Installing Claude Code..."
+  if ! command -v claude >/dev/null 2>&1; then
+    curl -fsSL https://claude.ai/install.sh | bash
+  fi
+
   [ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc"
 }
 
