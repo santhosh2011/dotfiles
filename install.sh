@@ -37,6 +37,7 @@ brew install eza
 brew install fzf
 brew install bat
 brew install yazi
+brew install direnv
 
 ### Nice to have
 brew install lazygit
@@ -64,6 +65,7 @@ brew install --cask font-sf-mono
 brew install --cask font-sf-pro
 brew install --cask font-hack-nerd-font
 brew install --cask font-jetbrains-mono
+brew install --cask font-jetbrains-mono-nerd-font
 brew install --cask font-fira-code
 
 

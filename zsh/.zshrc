@@ -19,6 +19,18 @@ alias ls="eza --icons --group-directories-first"
 alias ll="eza --icons --group-directories-first -la"
 alias lt="eza --icons --group-directories-first --tree --level=2"
 
+# Attach to a tmux session (or create it). Usage: ts [name]
+# If already inside tmux, switches the current client instead of nesting.
+ts() {
+  local name="${1:-main}"
+  if [ -n "$TMUX" ]; then
+    tmux has-session -t "$name" 2>/dev/null || tmux new-session -d -s "$name"
+    tmux switch-client -t "$name"
+  else
+    tmux new-session -A -s "$name"
+  fi
+}
+
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
@@ -60,4 +72,5 @@ function y() {
 
 
 eval "$(zoxide init zsh)"
+eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"

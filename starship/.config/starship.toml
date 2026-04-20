@@ -75,7 +75,7 @@ $conda\
 $meson\
 $spack\
 $memory_usage\
-$aws\
+${custom.aws}\
 $gcloud\
 $openstack\
 $azure\
@@ -246,9 +246,16 @@ version_format = "${raw}"
 
 [aws]
 disabled = true
-format = " [aws](italic) [$symbol $profile $region]($style)"
+
+[custom.aws]
+description = "AWS context, shown only when USE_AWS env var is set"
+command = 'printf "%s %s" "${AWS_PROFILE:-default}" "${AWS_REGION:-${AWS_DEFAULT_REGION:-}}"'
+when = 'test -n "$USE_AWS"'
+format = "  [$output]($style)"
 style = "bold blue"
-symbol = "▲ "
+
+[gcloud]
+detect_env_vars = ["USE_GCLOUD"]
 
 [buf]
 symbol = "■ "
