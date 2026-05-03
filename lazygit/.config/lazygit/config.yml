@@ -13,7 +13,7 @@ customCommands:
   - key: "C"
     context: "global"
     command: "git commit"
-    subprocess: true
+    output: terminal
   - key: "n"
     context: "localBranches"
     prompts:
@@ -39,4 +39,4 @@ customCommands:
   - key: "F"
     command: "git fetch --prune"
     context: "localBranches"
-    stream: true
+    output: log

@@ -7,5 +7,26 @@
       "ctrl-k": ["workspace::ActivatePaneInDirection", "Up"],
       "ctrl-l": ["workspace::ActivatePaneInDirection", "Right"]
     }
+  },
+  {
+    "context": "vim_mode == insert",
+    "bindings": {
+      "j k": ["workspace::SendKeystrokes", "escape"]
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal && !menu",
+    "bindings": {
+      "space f f": "file_finder::Toggle",
+      "space f g": "pane::DeploySearch",
+      "space f s": "outline::Toggle",
+      "space f S": "project_symbols::Toggle",
+      "space f r": "editor::FindAllReferences",
+      "space r n": "editor::Rename",
+      "space c a": "editor::ToggleCodeActions",
+      "space e":   "project_panel::ToggleFocus",
+      "[ d":       "editor::GoToPreviousDiagnostic",
+      "] d":       "editor::GoToDiagnostic"
+    }
   }
 ]
