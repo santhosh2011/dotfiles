@@ -107,6 +107,11 @@ install_user_phase() {
   rm -f "$HOME/.zshrc" "$HOME/.zprofile" "$HOME/.config/git/ignore"
   stow -d "$DOTFILES_DIR" -t "$HOME" ghostty git graphite kanata lazygit starship tmux yazi zed zsh
 
+  echo "==> Installing tmux plugins via TPM..."
+  if [ -x "$HOME/.config/tmux/plugins/tpm/bin/install_plugins" ]; then
+    "$HOME/.config/tmux/plugins/tpm/bin/install_plugins"
+  fi
+
   [ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc"
 }
 

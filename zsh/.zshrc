@@ -37,6 +37,10 @@ ts() {
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
+# less: keep colors (-R) and let it handle the mouse wheel itself,
+# so scrolling inside man/git-log/etc doesn't fall through to tmux scrollback.
+export LESS='-R --mouse'
+
 # ANTHROPIC_API_KEY removed — rotate the exposed key and store securely
 # e.g.: export ANTHROPIC_API_KEY=$(security find-generic-password -s 'ANTHROPIC_API_KEY' -w)
 
