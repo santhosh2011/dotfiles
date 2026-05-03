@@ -60,43 +60,77 @@ EOF
 function install {
   if [[ is_service_installed -eq 0 ]]; then
     echo "Service is already installed."
-  else
-    # create plist files for launchd config
-    echo "${plist_template}" \
-    | sed \
-        -e "s~{dash_path}~$dash_path~g" \
-        -e "s~{user}~$user~g" \
-        -e "s~{service_id}~$service_id~g" \
-        -e "s~{service_run_path}~$service_run_path~g" \
-        -e "s~{stderr_log_path}~$service_stderr_log_path~g" \
-        -e "s~{stdout_log_path}~$service_stdout_log_path~g" \
-    1> ./$service_id.plist.tmp
-
-    # verify plist file and install if valid
-    if plutil -lint ./$service_id.plist.tmp; then
-      sudo chmod 644 ./$service_id.plist.tmp
-      sudo cp -vp ./$service_id.plist.tmp $service_plist_path && rm -f ./$service_id.plist.tmp
-    else
-      echo "Plist file is not valid. Exiting..."
-      rm -f ./$service_id.plist.tmp
-      exit 1
-    fi
-
-    # setup sudoers.d
-    histchars=
-    shasum=$(shasum -a 256 "$service_run_path" | awk '{ print $1 }')
-    run_path_without_spaces=$(echo $service_run_path | sed -e 's/ /\\ /g')
-    printf "ALL ALL=(root) NOPASSWD: sha256:$shasum $run_path_without_spaces\n" \
-      1> ./$service_name.tmp
-    unset histchars
-
-    sudo chown root:wheel ./$service_name.tmp
-    sudo chmod 600 ./$service_name.tmp
-    sudo cp -vp ./$service_name.tmp $service_sudoers_path && rm -rf ./$service_name.tmp
-
-    printf "\n"
-    echo "Installed service."
+    return
   fi
+
+  if [[ ! -x "$service_run_path" ]]; then
+    echo "Error: daemon binary not found at:"
+    echo "  $service_run_path"
+    echo ""
+    echo "Install Karabiner-DriverKit-VirtualHIDDevice first:"
+    echo "  brew install --cask karabiner-elements"
+    echo "Open Karabiner-Elements once and approve the system extension"
+    echo "in System Settings → Privacy & Security, then re-run this script."
+    exit 1
+  fi
+
+  # create plist files for launchd config
+  echo "${plist_template}" \
+  | sed \
+      -e "s~{dash_path}~$dash_path~g" \
+      -e "s~{user}~$user~g" \
+      -e "s~{service_id}~$service_id~g" \
+      -e "s~{service_run_path}~$service_run_path~g" \
+      -e "s~{stderr_log_path}~$service_stderr_log_path~g" \
+      -e "s~{stdout_log_path}~$service_stdout_log_path~g" \
+  1> ./$service_id.plist.tmp
+
+  # verify plist file and install if valid
+  if ! plutil -lint ./$service_id.plist.tmp; then
+    echo "Plist file is not valid. Exiting..."
+    rm -f ./$service_id.plist.tmp
+    exit 1
+  fi
+  mkdir -p "$HOME/Library/LaunchAgents"
+  sudo chmod 644 ./$service_id.plist.tmp
+  if ! sudo cp -vp ./$service_id.plist.tmp $service_plist_path; then
+    echo "Error: failed to install plist to $service_plist_path"
+    rm -f ./$service_id.plist.tmp
+    exit 1
+  fi
+  rm -f ./$service_id.plist.tmp
+
+  # setup sudoers.d
+  histchars=
+  shasum=$(shasum -a 256 "$service_run_path" | awk '{ print $1 }')
+  unset histchars
+  if [[ -z "$shasum" ]]; then
+    echo "Error: failed to compute sha256 for $service_run_path"
+    sudo rm -f $service_plist_path
+    exit 1
+  fi
+  run_path_without_spaces=$(echo $service_run_path | sed -e 's/ /\\ /g')
+  printf "ALL ALL=(root) NOPASSWD: sha256:$shasum $run_path_without_spaces\n" \
+    1> ./$service_name.tmp
+
+  sudo chown root:wheel ./$service_name.tmp
+  sudo chmod 600 ./$service_name.tmp
+  if ! sudo visudo -cf ./$service_name.tmp; then
+    echo "Error: generated sudoers file failed validation. Aborting."
+    rm -f ./$service_name.tmp
+    sudo rm -f $service_plist_path
+    exit 1
+  fi
+  if ! sudo cp -vp ./$service_name.tmp $service_sudoers_path; then
+    echo "Error: failed to install sudoers file"
+    rm -f ./$service_name.tmp
+    sudo rm -f $service_plist_path
+    exit 1
+  fi
+  rm -f ./$service_name.tmp
+
+  printf "\n"
+  echo "Installed service."
 }
 
 clear-logs () {

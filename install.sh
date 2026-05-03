@@ -52,10 +52,16 @@ install_admin_phase() {
 
   echo "==> Installing Brew casks..."
   brew install --cask \
-    raycast warp zoom \
+    raycast warp zoom ghostty rectangle-pro karabiner-elements \
     sf-symbols font-sf-mono font-sf-pro \
     font-hack-nerd-font font-jetbrains-mono font-jetbrains-mono-nerd-font \
     font-fira-code
+
+  echo ""
+  echo "!! Open Karabiner-Elements once and approve the system extension"
+  echo "!! in System Settings → Privacy & Security before running the kanata"
+  echo "!! daemon setup, or kanata will fail to start."
+  echo ""
 
   echo "==> Installing Mac App Store apps..."
   mas install 497799835  # Xcode
@@ -84,7 +90,7 @@ install_user_phase() {
 
   echo "==> Installing SF Mono Nerd Font..."
   if [ ! -d /tmp/SFMono_Nerd_Font ]; then
-    git clone git@github.com:shaunsingh/SFMono-Nerd-Font-Ligaturized.git /tmp/SFMono_Nerd_Font
+    git clone https://github.com/shaunsingh/SFMono-Nerd-Font-Ligaturized.git /tmp/SFMono_Nerd_Font
   fi
   mkdir -p "$HOME/Library/Fonts"
   mv /tmp/SFMono_Nerd_Font/* "$HOME/Library/Fonts/" 2>/dev/null || true
