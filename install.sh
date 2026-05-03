@@ -45,7 +45,7 @@ install_admin_phase() {
     wget jq ripgrep bear mas gh ifstat switchaudio-osx shortcat \
     starship zsh-autosuggestions zsh-fast-syntax-highlighting \
     zoxide eza fzf bat yazi direnv \
-    lazygit tmux
+    lazygit tmux rainfrog
 
   echo "==> Installing HEAD-only formulae..."
   brew install fnnn --head
