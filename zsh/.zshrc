@@ -5,6 +5,21 @@
 source /opt/homebrew/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+# History: persist across panes/reboots. SHARE_HISTORY writes every command
+# immediately and re-reads on prompt, preventing the pane-overwrites-pane race
+# that was corrupting ~/.zsh_history.
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=100000
+SAVEHIST=100000
+setopt SHARE_HISTORY          # write on each command, read from other sessions
+setopt EXTENDED_HISTORY       # timestamps + duration per entry
+setopt HIST_IGNORE_DUPS       # skip consecutive duplicates
+setopt HIST_IGNORE_SPACE      # commands starting with space stay private
+setopt HIST_REDUCE_BLANKS     # collapse internal whitespace
+setopt HIST_VERIFY            # !! and friends edit before executing
+setopt HIST_FIND_NO_DUPS      # skip dupes when searching (Ctrl-R)
+setopt HIST_SAVE_NO_DUPS      # dedupe when writing to file
+
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="$HOME/development_packages/flutter/bin:$PATH"
 export GEM_HOME=$HOME/.gem
@@ -81,3 +96,18 @@ function y() {
 eval "$(zoxide init zsh)"
 eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"
+
+# fzf: Ctrl-R = fuzzy history, Ctrl-T = file picker, Alt-C = cd picker
+source <(fzf --zsh)
+
+# Use fd (respects .gitignore, faster) for fzf file/dir pickers
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
+
+# Prefix + Up/Down cycles only history entries matching what's typed.
+# Must be sourced after fast-syntax-highlighting (already at top of file).
+source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
