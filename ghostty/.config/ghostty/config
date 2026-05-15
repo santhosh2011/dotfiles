@@ -1,5 +1,11 @@
 font-family = "JetBrainsMono Nerd Font"
-font-size = 11
+font-size = 13
+
+# Match tmux's Catppuccin Mocha palette so the window doesn't flash on launch.
+# Override the background to Catppuccin's darkest shade (Crust) for a near-black
+# look closer to Terminal.app, while keeping ANSI colors consistent with tmux.
+theme = Catppuccin Mocha
+background = 11111b
 
 # Ensure tmux (launched directly below) and its plugins can find Homebrew bins
 env = PATH=~/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
