@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls *)",
+      "Bash(grep *)"
+    ],
+    "additionalDirectories": [
+      "/Users/santhosh"
+    ]
+  },
+  "model": "opus[1m]",
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "gsd@gsd-plugin": true,
+    "context7@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "compound-engineering-plugin": {
+      "source": {
+        "source": "github",
+        "repo": "EveryInc/compound-engineering-plugin"
+      }
+    },
+    "gsd-plugin": {
+      "source": {
+        "source": "github",
+        "repo": "jnuyens/gsd-plugin"
+      }
+    }
+  },
+  "effortLevel": "xhigh",
+  "theme": "dark",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Invoke the caveman skill with intensity full immediately to enable ultra-compressed communication for this session.\"}}'"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -39,32 +39,15 @@ install_admin_phase() {
   load_brew
   brew analytics off
 
-  echo "==> Installing Brew formulae..."
-  brew install \
-    gsl llvm boost libomp armadillo \
-    wget jq ripgrep bear mas gh ifstat switchaudio-osx shortcat \
-    starship zsh-autosuggestions zsh-fast-syntax-highlighting \
-    zoxide eza fzf bat yazi direnv \
-    lazygit tmux rainfrog
-
-  echo "==> Installing HEAD-only formulae..."
-  brew install fnnn --head
-
-  echo "==> Installing Brew casks..."
-  brew install --cask \
-    raycast warp zoom ghostty rectangle-pro karabiner-elements \
-    sf-symbols font-sf-mono font-sf-pro \
-    font-hack-nerd-font font-jetbrains-mono font-jetbrains-mono-nerd-font \
-    font-fira-code
+  echo "==> Installing Brew formulae, casks, and Mac App Store apps from Brewfile..."
+  DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
+  brew bundle install --file="$DOTFILES_DIR/Brewfile"
 
   echo ""
   echo "!! Open Karabiner-Elements once and approve the system extension"
   echo "!! in System Settings → Privacy & Security before running the kanata"
   echo "!! daemon setup, or kanata will fail to start."
   echo ""
-
-  echo "==> Installing Mac App Store apps..."
-  mas install 497799835  # Xcode
 }
 
 install_user_phase() {
@@ -104,8 +87,22 @@ install_user_phase() {
   echo "==> Stowing dotfiles to home directory..."
   DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
   brew install stow 2>/dev/null || true
-  rm -f "$HOME/.zshrc" "$HOME/.zprofile" "$HOME/.config/git/ignore"
-  stow -d "$DOTFILES_DIR" -t "$HOME" ghostty git graphite kanata lazygit starship tmux yazi zed zsh
+  # Remove pre-existing files that stow would conflict with (created by first-run defaults).
+  rm -f "$HOME/.zshrc" "$HOME/.zprofile" "$HOME/.config/git/ignore" \
+        "$HOME/.claude/settings.json"
+  stow -d "$DOTFILES_DIR" -t "$HOME" \
+    claude ghostty git graphite kanata lazygit starship tmux yazi zed zsh
+
+  echo "==> Bootstrapping ~/.gitconfig.local for personal git identity..."
+  if [ ! -f "$HOME/.gitconfig.local" ]; then
+    cat > "$HOME/.gitconfig.local" <<'EOF'
+# Personal git identity (not tracked in dotfiles). Fill in and uncomment:
+# [user]
+#     name = Your Name
+#     email = you@example.com
+EOF
+    echo "   Created $HOME/.gitconfig.local — edit it to set your name/email."
+  fi
 
   echo "==> Installing tmux plugins via TPM..."
   if [ -x "$HOME/.config/tmux/plugins/tpm/bin/install_plugins" ]; then
